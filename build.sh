@@ -9,4 +9,8 @@ pip install -r requirements.txt
 python manage.py collectstatic --no-input
 
 # Apply database migrations
-python manage.py migrate --fake-initial 
+# Explicitly fake the problematic migration first
+python manage.py migrate gamerank_users 0002 --fake
+
+# Now apply all other pending migrations
+python manage.py migrate 
