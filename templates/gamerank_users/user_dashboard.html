@@ -1,0 +1,23 @@
+{% extends '_base.html' %}
+
+{% block title %}Dashboard - GameRank{% endblock %}
+
+{% block content %}
+    <h1>Welcome, {{ request.user.profile.display_name|default:request.user.username }}!</h1>
+    
+    <p>This is your personal dashboard.</p>
+    
+    <h2>Stats</h2>
+    <ul>
+        <li>Votes Cast: {{ request.user.votes_count|default:0 }}</li>
+        <li>Average Score Given: {{ request.user.average_score|default:0.0|floatformat:1 }}</li>
+        <li>Games Followed: {{ request.user.follows_count|default:0 }}</li>
+        <li>Comments Made: {{ request.user.comments_count|default:0 }}</li>
+    </ul>
+
+    <p>
+        <a href="{% url 'gamerank_users:user_votes' %}" class="btn btn-secondary">View My Votes</a>
+        <a href="{% url 'gamerank_users:user_follows' %}" class="btn btn-secondary">View My Follows</a>
+        <a href="{% url 'gamerank_users:user_settings' %}" class="btn btn-secondary">Settings</a>
+    </p>
+{% endblock %} 

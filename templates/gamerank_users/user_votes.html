@@ -1,0 +1,20 @@
+{% extends '_base.html' %}
+
+{% block title %}My Votes - GameRank{% endblock %}
+
+{% block content %}
+    <h1>My Votes</h1>
+    {% if votes %}
+        <ul>
+            {% for vote in votes %}
+                <li>
+                    <a href="{% url 'gamerank_core:game_detail' pk=vote.game.id %}">{{ vote.game.title }}</a> - 
+                    Score: {{ vote.score }} ({{ vote.created_at|timesince }} ago)
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>You haven't voted on any games yet.</p>
+    {% endif %}
+    {# Add pagination later #}
+{% endblock %} 

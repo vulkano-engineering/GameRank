@@ -1,0 +1,20 @@
+{% extends '_base.html' %}
+
+{% block title %}My Follows - GameRank{% endblock %}
+
+{% block content %}
+    <h1>Games I Follow</h1>
+    {% if follows %}
+        <ul>
+            {% for follow in follows %}
+                <li>
+                    <a href="{% url 'gamerank_core:game_detail' pk=follow.game.id %}">{{ follow.game.title }}</a> 
+                    (Followed {{ follow.created_at|timesince }} ago)
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>You aren't following any games yet.</p>
+    {% endif %}
+    {# Add pagination later #}
+{% endblock %} 

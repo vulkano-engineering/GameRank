@@ -1,0 +1,14 @@
+Django>=5.0.0,<5.1.0
+django-htmx>=1.17.0
+django-crispy-forms>=2.1
+crispy-bootstrap5>=2023.10
+pytest-django>=4.7.0
+pytest-selenium>=4.0.0
+ruff>=0.2.0
+black>=24.1.0
+isort>=5.13.0
+mypy>=1.8.0
+types-requests>=2.31.0.20240125
+factory-boy>=3.3.0
+lxml>=5.1.0
+requests>=2.31.0 

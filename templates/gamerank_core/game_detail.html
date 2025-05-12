@@ -1,0 +1,92 @@
+{% extends '_base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}{{ game.title }} - GameRank{% endblock %}
+
+{% block content %}
+    {# Display messages #}
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <h1>{{ game.title }}</h1>
+    <div class="row">
+        <div class="col-md-4">
+            <img src="{{ game.image_url }}" class="img-fluid mb-3" alt="{{ game.title }}">
+        </div>
+        <div class="col-md-8">
+            <p><strong>Platform:</strong> {{ game.platform }}</p>
+            <p><strong>Genre:</strong> {{ game.genre }}</p>
+            <p><strong>Developer:</strong> {{ game.developer }}</p>
+            <p><strong>Publisher:</strong> {{ game.publisher }}</p>
+            <p><strong>Release Date:</strong> {{ game.release_date|date:"Y-m-d" }}</p>
+            <p><strong>Score:</strong> {{ game.average_score|floatformat:1 }} ({{ game.votes_count }} votes)</p>
+            <p>{{ game.description }}</p>
+            <p><small>Source: {{ game.source }} | ID: {{ game.id }}</small></p>
+
+            {# Actions - Only show if user is authenticated #}
+            {% if request.session.auth %}
+                <div class="actions mt-3">
+                    {# Vote Form #}
+                    <form action="{% url 'gamerank_core:game_action' pk=game.id %}" method="post" class="d-inline-block me-2">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="vote">
+                        {{ vote_form|crispy }}
+                        <button type="submit" class="btn btn-primary btn-sm">{% if user_vote %}Update Vote{% else %}Vote{% endif %}</button>
+                        {% if user_vote %}<span class="ms-2">Your current vote: {{ user_vote.score }}</span>{% endif %}
+                    </form>
+
+                    {# Follow/Unfollow Form #}
+                    <form action="{% url 'gamerank_core:game_action' pk=game.id %}" method="post" class="d-inline-block">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="follow">
+                        {{ follow_form|crispy }} {# Might not render anything if fields=[] #}
+                        <button type="submit" class="btn btn-{% if user_follow %}danger{% else %}success{% endif %} btn-sm">
+                            {% if user_follow %}Unfollow{% else %}Follow{% endif %}
+                        </button>
+                    </form>
+                </div>
+            {% else %}
+                <p><a href="{% url 'gamerank_users:login' %}?next={{ request.path }}">Login</a> to vote, follow, or comment.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <hr>
+
+    {# Comments Section #}
+    <h2>Comments ({{ comments|length }})</h2> {# Use length of passed comments #}
+    <div id="comments-section" class="mb-4">
+        {% for comment in comments %}
+            <div class="card mb-2">
+                <div class="card-body">
+                    <p class="card-text">{{ comment.body }}</p>
+                    <footer class="blockquote-footer">{{ comment.user.username }} <cite title="Source Title">({{ comment.created_at|timesince }} ago)</cite></footer>
+                </div>
+            </div>
+        {% empty %}
+            <p>No comments yet. Be the first!</p>
+        {% endfor %}
+    </div>
+
+    {# Comment Form - Only show if user is authenticated #}
+    {% if request.session.auth %}
+        <h3>Leave a Comment</h3>
+        <form action="{% url 'gamerank_core:game_action' pk=game.id %}" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="comment">
+            {{ comment_form|crispy }}
+            <button type="submit" class="btn btn-secondary mt-2">Post Comment</button>
+        </form>
+    {% endif %}
+
+{% endblock %}
+
+{% block extra_js %}
+{# Add HTMX triggers later if needed #}
+{% endblock %} 
